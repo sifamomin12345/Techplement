@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quote of the day</title> 
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="quote-box">
+ <h2>Quote of the day</h2>
+ <blockquote id="quote">Loading.....</blockquote>
+ <span id="author">Loading...</span>
+</div>
+
+<div id="navlist">
+ <!-- search bar right align -->
+        <div class="search">
+            <form id="search-form">
+                <input type="text" id="author-input" placeholder="Search quotes by author name" name="search">
+                <button id="search-btn" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+// Function to fetch a random quote from the API
+function fetchRandomQuote() {
+    fetch('http://localhost:3000/api/quote/random')
+        .then(response => response.json())
+        .then(data => {
+            // Update HTML with the received quote
+            document.getElementById('quote').textContent = data.text;
+            document.getElementById('author').textContent = `- ${data.author}`;
+        })
+        .catch(error => {
+            console.error('Error fetching random quote:', error);
+        });
+}
+
+// Function to fetch quotes by author name
+function searchQuotesByAuthor(author) {
+    fetch(`http://localhost:3000/api/quote/search?author=${author}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                // Display the first quote found
+                document.getElementById('quote').textContent = data[0].text;
+                document.getElementById('author').textContent = `- ${data[0].author}`;
+            } else {
+                document.getElementById('quote').textContent = 'No quotes found for this author';
+                document.getElementById('author').textContent = '';
+            }
+        })
+        .catch(error => {
+            console.error('Error searching quotes by author:', error);
+        });
+}
+
+// Event listener for form submission
+document.getElementById('search-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    const author = document.getElementById('author-input').value;
+    searchQuotesByAuthor(author);
+});
+
+// Fetch a random quote when the page loads
+fetchRandomQuote();
+
+</script>
+
+</body>
+</html>
